@@ -1,4 +1,3 @@
-
 const db = require("../config/db");
 
 module.exports = {
@@ -18,11 +17,11 @@ module.exports = {
   add(userId, title, videoId) {
     return new Promise((resolve, reject) => {
       db.run(
-        "INSERT INTO favorites(user_id, title, videoId) VALUES(?,?,?)",
+        "INSERT INTO favorites (user_id, title, videoId) VALUES (?, ?, ?)",
         [userId, title, videoId],
         function (err) {
           if (err) return reject(err);
-          resolve(this.lastID);
+          resolve({ id: this.lastID, user_id: userId, title, videoId });
         }
       );
     });
