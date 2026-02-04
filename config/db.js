@@ -1,6 +1,10 @@
-
+const path = require("path");
 const sqlite3 = require("sqlite3").verbose();
-const db = new sqlite3.Database("database.sqlite");
+
+const DB_FILE = process.env.DB_FILE || path.join(process.cwd(), "database.sqlite");
+
+// On Render, set DB_FILE=/var/data/database.sqlite
+const db = new sqlite3.Database(DB_FILE);
 
 // Create tables
 db.serialize(() => {
