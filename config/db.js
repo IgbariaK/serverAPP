@@ -3,28 +3,30 @@ const path = require("path");
 const os = require("os");
 const sqlite3 = require("sqlite3").verbose();
 
-// Use Render-friendly writable location
+// ✅ Use env var if provided, otherwise default to /tmp on Render
 const DB_FILE =
   process.env.DB_FILE ||
   path.join(os.tmpdir(), "database.sqlite");
 
-// Make sure the directory exists (important on hosts)
+// ✅ Ensure directory exists
 fs.mkdirSync(path.dirname(DB_FILE), { recursive: true });
 
-// Open database (create if missing)
+console.log("✅ Using SQLite DB file:", DB_FILE);
+
+// ✅ Open DB (create if missing)
 const db = new sqlite3.Database(
   DB_FILE,
   sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE,
   (err) => {
     if (err) {
-      console.error("❌ Failed to open DB:", DB_FILE, err);
+      console.error("❌ SQLite open error:", err.message);
     } else {
-      console.log("✅ DB opened at:", DB_FILE);
+      console.log("✅ SQLite opened successfully");
     }
   }
 );
 
-// Create tables
+// ✅ Create tables
 db.serialize(() => {
   db.run(`CREATE TABLE IF NOT EXISTS users(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
