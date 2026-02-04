@@ -1,4 +1,3 @@
-
 const AuthService = require("../services/AuthService");
 
 module.exports = {
@@ -16,18 +15,41 @@ module.exports = {
     const password = req.body.password || "";
 
     if (!fullName || !email || !password) {
-      return res.render("register", { error: "All fields are required.", fullName, email });
+      return res.render("register", {
+        error: "All fields are required.",
+        fullName,
+        email,
+      });
     }
 
     try {
       const result = await AuthService.register({ fullName, email, password });
+
       if (!result.ok && result.reason === "EMAIL_EXISTS") {
-        return res.render("register", { error: "Email already registered. Try login.", fullName, email });
+        return res.render("register", {
+          error: "Email already registered. Try login.",
+          fullName,
+          email,
+        });
       }
-      return res.redirect("/login?registered=1");
+
+      // ✅ OPTIONAL: create a fresh session after register (safe + consistent)
+      req.session.regenerate((err) => {
+        if (err) {
+          console.error(err);
+          // even if regenerate fails, redirect to login still works
+          return res.redirect("/login?registered=1");
+        }
+        // we are NOT auto-logging-in here, just making sure the session is fresh
+        return res.redirect("/login?registered=1");
+      });
     } catch (e) {
       console.error(e);
-      return res.render("register", { error: "Something went wrong. Try again.", fullName, email });
+      return res.render("register", {
+        error: "Something went wrong. Try again.",
+        fullName,
+        email,
+      });
     }
   },
 
@@ -52,8 +74,16 @@ module.exports = {
         return res.render("login", { error: "Login failed.", email });
       }
 
-      req.session.user = result.user;
-      return res.redirect("/");
+      // ✅ IMPORTANT: regenerate session on successful login
+      req.session.regenerate((err) => {
+        if (err) {
+          console.error(err);
+          return res.render("login", { error: "Something went wrong. Try again.", email });
+        }
+
+        req.session.user = result.user;
+        return res.redirect("/");
+      });
     } catch (e) {
       console.error(e);
       return res.render("login", { error: "Something went wrong. Try again.", email });
@@ -61,6 +91,13 @@ module.exports = {
   },
 
   logout(req, res) {
-    req.session.destroy(() => res.redirect("/"));
-  }
+    // extra safety
+    req.session.user = null;
+
+    req.session.destroy(() => {
+      // ✅ remove cookie so browser doesn't reuse the old session id
+      res.clearCookie("connect.sid");
+      res.redirect("/");
+    });
+  },
 };
