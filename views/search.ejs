@@ -1,0 +1,38 @@
+
+<%- include("layout", {
+  user: null,
+  body: `
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <h2 class="h4 m-0">Search YouTube</h2>
+    <a class="btn btn-outline-secondary btn-sm" href="/favorites">My favorites</a>
+  </div>
+
+  <form method="GET" action="/search" class="mb-4">
+    <input class="form-control" name="q" placeholder="Search..." value="${q || ""}" required />
+  </form>
+
+  <div class="row">
+    ${results.map(v => `
+      <div class="col-md-4">
+        <div class="card mb-3 shadow-sm">
+          <img src="${v.thumbnail}" class="card-img-top" />
+          <div class="card-body">
+            <h6 class="card-title">${v.title}</h6>
+
+            <form method="POST" action="/favorites/add">
+              <input type="hidden" name="title" value="${v.title.replaceAll('"', '&quot;')}" />
+              <input type="hidden" name="videoId" value="${v.videoId}" />
+              <button class="btn btn-primary w-100">Add to favorites</button>
+            </form>
+
+            <a class="btn btn-link w-100 mt-2" target="_blank" href="https://www.youtube.com/watch?v=${v.videoId}">
+              Open on YouTube
+            </a>
+          </div>
+        </div>
+      </div>
+    `).join("")}
+  </div>
+
+  ${results.length === 0 && q ? `<p class="text-muted">No results found.</p>` : ""}
+`}) %>

@@ -1,0 +1,31 @@
+
+<%- include("layout", {
+  user: null,
+  body: `
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h2 class="h4 mb-3">Login</h2>
+
+          ${error ? `<div class="alert alert-danger">${error}</div>` : ""}
+
+          <form method="POST" action="/login">
+            <label class="form-label">Email</label>
+            <input class="form-control mb-3" name="email" type="email" value="${email || ""}" required />
+
+            <label class="form-label">Password</label>
+            <input class="form-control mb-3" name="password" type="password" required />
+
+            <button class="btn btn-primary w-100">Login</button>
+          </form>
+
+          <div class="mt-3 text-center">
+            <span class="text-muted">Don't have an account?</span>
+            <a href="/register">Register here</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+`}) %>

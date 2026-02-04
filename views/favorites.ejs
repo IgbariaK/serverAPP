@@ -1,0 +1,28 @@
+
+<%- include("layout", {
+  user,
+  body: `
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <h2 class="h4 m-0">Your Favorites</h2>
+    <a class="btn btn-primary btn-sm" href="/search">Search more</a>
+  </div>
+
+  <div class="row">
+    ${favs.map(f => `
+      <div class="col-md-4">
+        <div class="card mb-3 shadow-sm">
+          <img src="https://img.youtube.com/vi/${f.videoId}/0.jpg" class="card-img-top" />
+          <div class="card-body">
+            <h6 class="card-title">${f.title}</h6>
+            <a class="btn btn-outline-secondary w-100 mb-2" target="_blank" href="https://www.youtube.com/watch?v=${f.videoId}">
+              Watch
+            </a>
+            <a class="btn btn-danger w-100" href="/favorites/delete/${f.id}">Delete</a>
+          </div>
+        </div>
+      </div>
+    `).join("")}
+  </div>
+
+  ${favs.length === 0 ? `<p class="text-muted">No favorites yet. Go to Search and add some!</p>` : ""}
+`}) %>

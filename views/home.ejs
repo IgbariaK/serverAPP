@@ -1,0 +1,18 @@
+
+<%- include("layout", {
+  user,
+  body: `
+  <div class="card shadow-sm">
+    <div class="card-body text-center">
+      <h1 class="h3 mb-2">Welcome ${user ? user.fullName : "Guest"}</h1>
+      ${user ? `
+        <p class="text-muted">Search YouTube and save your favorites.</p>
+        <a href="/search" class="btn btn-primary">Search Videos</a>
+      ` : `
+        <p class="text-muted">Login or create a new account.</p>
+        <a href="/login" class="btn btn-primary">Login</a>
+        <a href="/register" class="btn btn-outline-primary ms-2">Register</a>
+      `}
+    </div>
+  </div>
+`}) %>
